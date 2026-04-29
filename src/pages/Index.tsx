@@ -3,6 +3,7 @@ import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { Patient, Pendencia } from '@/types';
 import { PendenciaForm } from '@/components/PendenciaForm';
 import { PendenciaList } from '@/components/PendenciaList';
+import { Dashboard } from '@/pages/Dashboard';
 import { calcularStatus, calcularDiasAtraso, calcularMetricasPaciente } from '@/utils/calculations';
 
 export function Index() {
