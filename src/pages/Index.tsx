@@ -14,6 +14,7 @@ export function Index() {
   const [filterNome, setFilterNome] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [showPatientForm, setShowPatientForm] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
   const [newPatientNome, setNewPatientNome] = useState('');
   const [newPatientTelefone, setNewPatientTelefone] = useState('');
 
