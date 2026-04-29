@@ -1,7 +1,6 @@
-import { Pendencia, Patient } from '@/types';
-import { gerarMensagemWhatsApp } from '@/utils/calculations';
+import { Patient, Pendencia } from '@/types';
 
-interface PendenciaListProps {
+interface Props {
   pendencias: Pendencia[];
   patients: Patient[];
   onRegularizar: (id: string) => void;
@@ -10,77 +9,85 @@ interface PendenciaListProps {
   filterStatus: string;
 }
 
-export function PendenciaList({ pendencias, patients, onRegularizar, onEdit, filterNome, filterStatus }: PendenciaListProps) {
+export function PendenciaList({ pendencias, patients, onRegularizar, onEdit, filterNome, filterStatus }: Props) {
   const filtered = pendencias.filter(p => {
     const patient = patients.find(pat => pat.id === p.patientId);
-    const matchNome = !filterNome || (patient?.nome || '').toLowerCase().includes(filterNome.toLowerCase());
-    const matchStatus = !filterStatus || p.status === filterStatus;
-    return matchNome && matchStatus;
+    const nomeMatch = patient?.nome.toLowerCase().includes(filterNome.toLowerCase()) ?? false;
+    const statusMatch = filterStatus === '' || p.status === filterStatus;
+    return nomeMatch && statusMatch;
   });
 
-  const getPatientName = (patientId: string) => patients.find(p => p.id === patientId)?.nome || 'Desconhecido';
-  const getPatientPhone = (patientId: string) => patients.find(p => p.id === patientId)?.telefone || '';
-
-  const statusColors: Record<string, string> = {
-    pendente: 'bg-yellow-100 border-yellow-300',
-    atrasado: 'bg-red-100 border-red-300',
-    cobrado: 'bg-orange-100 border-orange-300',
-    regularizado: 'bg-green-100 border-green-300',
-  };
+  if (filtered.length === 0) {
+    return (
+      <div className="text-center py-12 text-gray-500">
+        <p className="text-lg">Nenhuma pendência encontrada.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-2">
-      {filtered.length === 0 && (
-        <p className="text-center text-gray-500 py-8">Nenhuma pendência encontrada</p>
-      )}
       {filtered.map(p => {
-        const patientName = getPatientName(p.patientId);
-        const phone = getPatientPhone(p.patientId);
-        const whatsappLink = `https://wa.me/55${phone.replace(/\D/g, '')}?text=${gerarMensagemWhatsApp(patientName, p.medicamento, p.dataRetirada)}`;
-
+        const patient = patients.find(pat => pat.id === p.patientId);
+        const isAtrasado = p.status === 'atrasado';
         return (
-          <div key={p.id} className={`border-2 rounded-lg p-4 ${statusColors[p.status]}`}>
+          <div
+            key={p.id}
+            className={`border rounded-lg p-4 ${isAtrasado ? 'bg-red-50 border-red-300' : 'bg-white'}`}
+          >
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="font-bold text-lg">{patientName}</h3>
-                <p className="text-sm text-gray-600">{p.medicamento} - {p.quantidade} unidades</p>
-                <p className="text-sm">Retirado por: {p.retiradoPor}</p>
-                <p className="text-sm">Retirada: {new Date(p.dataRetirada).toLocaleDateString('pt-BR')}</p>
-                <p className="text-sm">Prometida: {new Date(p.dataPrometida).toLocaleDateString('pt-BR')}</p>
-                {p.dataEntrega && (
-                  <p className="text-sm">Entregue: {new Date(p.dataEntrega).toLocaleDateString('pt-BR')}</p>
+                <p className="font-bold text-lg">{patient?.nome ?? 'Desconhecido'}</p>
+                <p className="text-sm text-gray-600">{p.medicamento} - {p.quantidade} unidade(s)</p>
+                <p className="text-sm text-gray-600">Retirado por: {p.retiradoPor}</p>
+                <p className="text-sm text-gray-600">Retirada: {p.dataRetirada} | Prometida: {p.dataPrometida}</p>
+                {p.dataEntrega && <p className="text-sm text-green-600">Entregue em: {p.dataEntrega}</p>}
+                {p.observacao && <p className="text-sm text-gray-500 italic">Obs: {p.observacao}</p>}
+                {p.lotes.length > 0 && (
+                  <p className="text-sm text-gray-500">Lotes: {p.lotes.map(l => l.lote).join(', ')}</p>
                 )}
-                {p.diasAtraso !== null && p.diasAtraso > 0 && (
-                  <p className="text-sm font-bold text-red-600">{p.diasAtraso} dia(s) de atraso</p>
-                )}
-                {p.observacao && <p className="text-sm italic mt-1">Obs: {p.observacao}</p>}
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1">
                 {p.status !== 'regularizado' && (
-                  <>
-                    <button
-                      onClick={() => onRegularizar(p.id)}
-                      className="p-2 bg-green-500 text-white rounded text-sm font-bold"
-                    >
-                      Receita entregue
-                    </button>
-                    <a
-                      href={whatsappLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 bg-green-600 text-white rounded text-sm text-center font-bold"
-                    >
-                      WhatsApp
-                    </a>
-                  </>
+                  <button
+                    onClick={() => onRegularizar(p.id)}
+                    className="p-2 bg-green-600 text-white rounded text-sm font-bold"
+                  >
+                    Regularizar
+                  </button>
                 )}
                 <button
                   onClick={() => onEdit(p)}
-                  className="p-2 bg-blue-500 text-white rounded text-sm"
+                  className="p-2 bg-blue-600 text-white rounded text-sm font-bold"
                 >
                   Editar
                 </button>
+                {p.status === 'atrasado' && patient && (
+                  <a
+                    href={`https://wa.me/55${patient.telefone.replace(/\D/g, '')}?text=${encodeURIComponent(
+                      `Olá ${patient.nome}, você retirou ${p.medicamento} em ${p.dataRetirada} e ainda não entregou a receita. Por favor, regularize o mais breve possível.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 bg-green-500 text-white rounded text-sm font-bold text-center"
+                  >
+                    WhatsApp
+                  </a>
+                )}
               </div>
+            </div>
+            <div className="mt-2">
+              <span className={`inline-block px-2 py-1 rounded text-xs font-bold ${
+                p.status === 'regularizado' ? 'bg-green-100 text-green-800' :
+                p.status === 'atrasado' ? 'bg-red-100 text-red-800' :
+                p.status === 'cobrado' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-blue-100 text-blue-800'
+              }`}>
+                {p.status}
+              </span>
+              {p.diasAtraso !== null && p.diasAtraso > 0 && (
+                <span className="ml-2 text-sm text-red-600 font-bold">{p.diasAtraso} dia(s) de atraso</span>
+              )}
             </div>
           </div>
         );
