@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Index } from '@/pages/Index';
+import { BlankPage } from '@/pages/BlankPage';
 
 export function App() {
   return (
