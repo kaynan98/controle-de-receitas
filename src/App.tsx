@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Index } from '@/pages/Index';
 import { BlankPage } from '@/pages/BlankPage';
+import { Pacientes } from '@/pages/Pacientes';
 
 export function App() {
   return (
