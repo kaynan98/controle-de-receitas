@@ -10,7 +10,7 @@ export function Dashboard() {
   const totalAtrasados = pendencias.filter(p => p.status === 'atrasado').length;
   const venceHoje = pendencias.filter(p => {
     const hoje = new Date().toISOString().split('T')[0];
-    return p.dataPrometida === hoje && p.status !== 'regularizado';
+    return p.dataPrometida === hoje && p.status !== 'regularizado' && p.status !== 'cobrado';
   }).length;
 
   const metricsByPatient = patients.map(patient => {
