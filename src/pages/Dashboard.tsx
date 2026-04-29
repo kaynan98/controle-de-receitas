@@ -13,24 +13,24 @@ export function Dashboard() {
     if (precisaAtualizar) {
       setPendencias(atualizadas);
     }
-  }, []);
+  }, [pendencias, setPendencias]);
 
-  const totalPendentes = pendencias.filter(p => p.status === 'pendente').length;
-  const totalAtrasados = pendencias.filter(p => p.status === 'atrasado').length;
-  const venceHoje = pendencias.filter(p => {
+  const totalPendentes = useMemo(() => pendencias.filter(p => p.status === 'pendente').length, [pendencias]);
+  const totalAtrasados = useMemo(() => pendencias.filter(p => p.status === 'atrasado').length, [pendencias]);
+  const venceHoje = useMemo(() => pendencias.filter(p => {
     const hoje = new Date().toISOString().split('T')[0];
     return p.dataPrometida === hoje && p.status !== 'regularizado' && p.status !== 'cobrado';
-  }).length;
+  }).length, [pendencias]);
 
-  const metricsByPatient = patients.map(patient => {
+  const metricsByPatient = useMemo(() => patients.map(patient => {
     const patientPendencias = pendencias.filter(p => p.patientId === patient.id);
     return { patient, metrics: calcularMetricasPaciente(patientPendencias) };
-  });
+  }), [patients, pendencias]);
 
-  const ranking = [...metricsByPatient]
+  const ranking = useMemo(() => [...metricsByPatient]
     .filter(m => m.metrics.totalRetiradas > 0)
     .sort((a, b) => b.metrics.mediaDiasAtraso - a.metrics.mediaDiasAtraso)
-    .slice(0, 5);
+    .slice(0, 5), [metricsByPatient]);
 
   return (
     <div className="space-y-6">
