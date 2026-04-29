@@ -80,7 +80,27 @@ export function Index() {
     <div className="min-h-screen bg-gray-50 p-4 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold text-center mb-6">Controle de Pendências</h1>
 
-      {/* Dashboard */}
+      {/* Navegação */}
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={() => setShowDashboard(false)}
+          className={`flex-1 p-3 rounded-lg text-lg font-bold ${!showDashboard ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+        >
+          Pendências
+        </button>
+        <button
+          onClick={() => setShowDashboard(true)}
+          className={`flex-1 p-3 rounded-lg text-lg font-bold ${showDashboard ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+        >
+          Dashboard
+        </button>
+      </div>
+
+      {showDashboard ? (
+        <Dashboard />
+      ) : (
+        <>
+      {/* Dashboard resumo */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-4 text-center">
           <p className="text-2xl font-bold">{totalPendentes}</p>
