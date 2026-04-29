@@ -5,30 +5,20 @@ export interface Patient {
   createdAt: string;
 }
 
-ex interface Lote {
-  id: string;
-  lote: string;
-}
-
 export interface Pendencia {
   id: string;
   patientId: string;
-  medicamento: string;
-  quantidade: number;
-  lotes: Lote[];
-  dataRetirada: string;
+  descricao: string;
   dataPrometida: string;
   dataEntrega: string | null;
-  retiradoPor: string;
-  observacao: string;
   status: 'pendente' | 'atrasado' | 'cobrado' | 'regularizado';
   diasAtraso: number | null;
   createdAt: string;
 }
 
-export interface MetricasPaciente {
-  mediaDiasAtraso: number;
+ex interface MetricasPaciente {
   totalRetiradas: number;
   totalAtrasos: number;
+  mediaDiasAtraso: number;
   classificacao: 'bom' | 'medio' | 'ruim';
 }
