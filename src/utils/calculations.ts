@@ -19,6 +19,16 @@ export function calcularStatus(
   return 'pendente';
 }
 
+export function atualizarStatusPendencias(pendencias: Pendencia[]): Pendencia[] {
+  return pendencias.map(p => {
+    const novoStatus = calcularStatus(p.dataPrometida, p.dataEntrega, p.status === 'cobrado');
+    const novosDiasAtraso = p.dataEntrega
+      ? calcularDiasAtraso(p.dataEntrega, p.dataPrometida)
+      : (novoStatus === 'atrasado' ? calcularDiasAtraso(new Date().toISOString(), p.dataPrometida) : null);
+    return { ...p, status: novoStatus, diasAtraso: novosDiasAtraso };
+  });
+}
+
 export function calcularMetricasPaciente(pendencias: Pendencia[]): MetricasPaciente {
   const totalRetiradas = pendencias.length;
   const atrasadas = pendencias.filter(p => p.diasAtraso !== null && p.diasAtraso > 0);
