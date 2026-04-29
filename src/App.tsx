@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 function App() {
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
-  const [diferenca, setDiferenca] = useState<{ dias: number; meses: number; anos: number } | null>(null);
+  const [diferenca, setDiferenca] = useState(null);
 
   const calcularDiferenca = () => {
     if (!dataInicio || !dataFim) return;
@@ -18,7 +18,7 @@ function App() {
     const anos = Math.floor(dias / 365);
     const meses = Math.floor((dias % 365) / 30);
     const diasRestantes = dias - (anos * 365) - (meses * 30);
-    setDiferenca({ dias, meses, anos: anos + (meses >= 12 ? 1 : 0) });
+    setDiferenca({ dias: diasRestantes, meses, anos });
   };
 
   return (
