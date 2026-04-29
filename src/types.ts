@@ -16,7 +16,7 @@ export interface Pendencia {
   createdAt: string;
 }
 
-ex interface MetricasPaciente {
+export interface MetricasPaciente {
   totalRetiradas: number;
   totalAtrasos: number;
   mediaDiasAtraso: number;
