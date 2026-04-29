@@ -5,7 +5,15 @@ import { useEffect } from 'react';
 
 export function Dashboard() {
   const [patients] = useLocalStorage<Patient[]>('patients', []);
-  const [pendencias] = useLocalStorage<Pendencia[]>('pendencias', []);
+  const [pendencias, setPendencias] = useLocalStorage<Pendencia[]>('pendencias', []);
+
+  useEffect(() => {
+    const atualizadas = atualizarStatusPendencias(pendencias);
+    const precisaAtualizar = atualizadas.some((p, i) => p.status !== pendencias[i].status || p.diasAtraso !== pendencias[i].diasAtraso);
+    if (precisaAtualizar) {
+      setPendencias(atualizadas);
+    }
+  }, []);
 
   const totalPendentes = pendencias.filter(p => p.status === 'pendente').length;
   const totalAtrasados = pendencias.filter(p => p.status === 'atrasado').length;
