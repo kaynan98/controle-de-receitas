@@ -204,6 +204,8 @@ export function Index() {
         filterNome={filterNome}
         filterStatus={filterStatus}
       />
+      </>
+      )}
     </div>
   );
 }
