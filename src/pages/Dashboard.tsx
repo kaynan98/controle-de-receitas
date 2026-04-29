@@ -1,7 +1,7 @@
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { Patient, Pendencia } from '@/types';
 import { calcularMetricasPaciente, atualizarStatusPendencias } from '@/utils/calculations';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 export function Dashboard() {
   const [patients] = useLocalStorage<Patient[]>('patients', []);
