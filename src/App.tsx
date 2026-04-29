@@ -9,6 +9,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/blank" element={<BlankPage />} />
+        <Route path="/pacientes" element={<Pacientes />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
