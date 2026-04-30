@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
 
+interface Evento {
+  id: number;
+  titulo: string;
+  data: string;
+  tipo: 'aniversario' | 'reuniao' | 'feriado';
+}
+
 interface Diferenca {
   dias: number;
   meses: number;
