@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 
+interface Diferenca {
+  dias: number;
+  meses: number;
+  anos: number;
+}
+
 function App() {
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
-  const [diferenca, setDiferenca] = useState(null);
+  const [diferenca, setDiferenca] = useState<Diferenca | null>(null);
 
   const calcularDiferenca = () => {
     if (!dataInicio || !dataFim) return;
@@ -14,11 +20,19 @@ function App() {
       return;
     }
     const diffMs = fim.getTime() - inicio.getTime();
-    const dias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const anos = Math.floor(dias / 365);
-    const meses = Math.floor((dias % 365) / 30);
-    const diasRestantes = dias - (anos * 365) - (meses * 30);
-    setDiferenca({ dias: diasRestantes, meses, anos });
+    const diasTotais = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    let anos = 0;
+    let meses = 0;
+    let dias = diasTotais;
+    while (dias >= 365) {
+      anos++;
+      dias -= 365;
+    }
+    while (dias >= 30) {
+      meses++;
+      dias -= 30;
+    }
+    setDiferenca({ dias, meses, anos });
   };
 
   return (
